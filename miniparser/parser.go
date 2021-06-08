@@ -11,11 +11,13 @@ import (
 	"github.com/AllinChen/miniParser/common"
 )
 
-type SQLInfo struct {
+type SpeInfo struct {
 	WhereCols  []string
 	JoinTables []string
 	SelectTabs []string
 }
+
+var SQLInfo SpeInfo
 
 var (
 	DefaultSQLList = []string{
@@ -176,6 +178,10 @@ func (v *Visitor) Enter(in ast.Node) (out ast.Node, skipChildren bool) {
 		case *ast.ColumnName:
 			columnName := in.(*ast.ColumnName).Name.L
 			v.AddColumn(columnName)
+
+		case *ast.SelectStmt:
+			TableName := in.(*ast.SelectStmt).From.TableRefs.Left.(*ast.TableSource).Source.(*ast.TableName).Name.L
+			SQLInfo.SelectTabs = append(SQLInfo.SelectTabs, TableName)
 		}
 	}
 
