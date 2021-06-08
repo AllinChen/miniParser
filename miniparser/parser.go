@@ -1,4 +1,4 @@
-package minipaser
+package miniparser
 
 import (
 	"reflect"
@@ -8,8 +8,14 @@ import (
 	"github.com/pingcap/parser/ast"
 	"github.com/romberli/go-util/constant"
 
-	"github.com/romberli/sqlparser-go/lib/common"
+	"github.com/AllinChen/miniParser/common"
 )
+
+type SQLInfo struct {
+	WhereCols  []string
+	JoinTables []string
+	SelectTabs []string
+}
 
 var (
 	DefaultSQLList = []string{
