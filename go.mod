@@ -1,11 +1,9 @@
 module github.com/AllinChen/miniParser
 
-go 1.16
+go 1.12
 
 require (
-	github.com/pingcap/parser v3.1.2+incompatible
-	github.com/pingcap/tipb v0.0.0-20210603161937-cfb5a9225f95 // indirect
-	github.com/romberli/go-util v0.3.8
-	github.com/sirupsen/logrus v1.8.1 // indirect
-	golang.org/x/text v0.3.6 // indirect
+	github.com/pingcap/parser v0.0.0-20191226063030-0f982a18b6e7
+	github.com/pingcap/tidb v0.0.0-20190108123336-c68ee7318319
+	github.com/romberli/go-util v0.3.2
 )

@@ -6,6 +6,7 @@ import (
 
 	"github.com/pingcap/parser"
 	"github.com/pingcap/parser/ast"
+	driver "github.com/pingcap/tidb/types/parser_driver"
 	"github.com/romberli/go-util/constant"
 
 	"github.com/AllinChen/miniParser/common"
@@ -180,8 +181,42 @@ func (v *Visitor) Enter(in ast.Node) (out ast.Node, skipChildren bool) {
 			v.AddColumn(columnName)
 
 		case *ast.SelectStmt:
-			TableName := in.(*ast.SelectStmt).From.TableRefs.Left.(*ast.TableSource).Source.(*ast.TableName).Name.L
-			SQLInfo.SelectTabs = append(SQLInfo.SelectTabs, TableName)
+			TableName := ""
+			if in.(*ast.SelectStmt).From.TableRefs.Left != nil {
+				switch in.(*ast.SelectStmt).From.TableRefs.Left.(type) {
+				case *ast.Join:
+					TableName = in.(*ast.SelectStmt).From.TableRefs.Left.(*ast.Join).Left.(*ast.TableSource).Source.(*ast.TableName).Name.String()
+				case *ast.TableSource:
+					TableName = in.(*ast.SelectStmt).From.TableRefs.Left.(*ast.TableSource).Source.(*ast.TableName).Name.String()
+				}
+			}
+			if TableName != "" {
+				SQLInfo.SelectTabs = append(SQLInfo.SelectTabs, TableName)
+			}
+
+		case *ast.Join:
+			TableNameL := ""
+			if in.(*ast.Join).Left != nil {
+				switch in.(*ast.Join).Left.(type) {
+				case *ast.TableSource:
+					TableNameL = in.(*ast.Join).Left.(*ast.TableSource).Source.(*ast.TableName).Name.String()
+				}
+			}
+			if TableNameL != "" {
+				SQLInfo.JoinTables = append(SQLInfo.SelectTabs, TableNameL)
+			}
+
+			TableNameR := ""
+			if in.(*ast.Join).Right != nil {
+				switch in.(*ast.Join).Left.(type) {
+				case *ast.TableSource:
+					TableNameR = in.(*ast.Join).Right.(*ast.TableSource).Source.(*ast.TableName).Name.String()
+				}
+			}
+			if TableNameL != "" {
+				SQLInfo.JoinTables = append(SQLInfo.SelectTabs, TableNameR)
+			}
+
 		}
 	}
 
